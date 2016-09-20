@@ -1,0 +1,22 @@
+
+
+
+//USe this function to add worldmatrix modified callback
+FMDagMessage.addWorldMatrixModifiedCallback	()
+
+
+
+//use this to check for name changed, attribute changed etc.
+MNodeMessage
+
+// use this to get messages about vertex,edge,face changes
+MPolyMessage 
+	
+
+
+//Use this to handle Transformation nodes
+MFnTransform
+if node.hasFn(MFn::kTransform)
+
+
+http://help.autodesk.com/view/MAYAUL/2016/ENU/?guid=__cpp_ref_poly_message_cmd_2poly_message_cmd_8cpp_example_html
