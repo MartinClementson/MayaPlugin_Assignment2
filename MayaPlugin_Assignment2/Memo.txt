@@ -29,3 +29,25 @@ http://help.autodesk.com/view/MAYAUL/2016/ENU/?guid=__cpp_ref_annotated_html
 MDagPath path;
 
  path.transform(&status);
+
+
+
+ addPolyComponentIdChangedCallback // this is called if you delete a vert or edge on a mesh
+
+
+ addCameraChangedCallback// kanske use
+
+
+
+ //till när man ska ha vertexInformation
+MFnMesh class (hanterar kMesh)
+		vertex list (array med alla vertiser)
+		uv's
+		normals
+
+
+
+
+// innehåller view,  atris och sånt
+MRenderData
+

@@ -11,9 +11,7 @@ static MCallbackId _TransformChangedID;
 static MCallbackIdArray polyCallbackIds;
 
 static MCallbackIdArray transformCallbackIds;
-static MCallbackId _VertChangedID;
-static MCallbackId _EdgeChangedID;
-static MCallbackId _FaceChangedID;
+
 EXPORT MStatus initializePlugin(MObject obj) {
 	std::cout.rdbuf(std::cerr.rdbuf());
 
@@ -69,11 +67,34 @@ EXPORT MStatus initializePlugin(MObject obj) {
 				if(transformCallbackIds.append(newId)== MS::kSuccess)
 					std::cerr << "Transform callback added!  " << path.fullPathName() << std::endl;
 				else
-					std::cerr << "Could not add worldMatrix callback" << std::endl;
+					std::cerr << "Could not add worldMatrix callback , Path: " << path.fullPathName() << std::endl;
 				
 			}
 			else
-				std::cerr << "Could not add worldMatrix callback" << std::endl;
+				std::cerr << "Could not add worldMatrix callback , Path: "<< path.fullPathName() << std::endl;
+
+		}
+
+
+		MItDag meshIt(MItDag::kBreadthFirst, MFn::kMesh, &result);
+		for (; !meshIt.isDone(); meshIt.next())
+		{
+					
+			MFnMesh thisMesh(meshIt.currentItem());
+			
+			//MCallbackId polyId = MNodeMessage::addNodeDirtyCallback(meshIt.currentItem(), nodeIsDirty, NULL, &result);
+
+			MCallbackId polyId =	MNodeMessage::addAttributeChangedCallback(meshIt.currentItem(),userCB,NULL,&result);
+
+			//MCallbackId polyId = MPolyMessage::addPolyTopologyChangedCallback(meshIt.currentItem() ,topologyChanged, NULL, &result);
+			if (result == MS::kSuccess)
+
+			{
+				polyCallbackIds.append(polyId);
+				std::cerr << "Polychange callback added!  " << meshIt.currentItem().apiTypeStr() << std::endl;
+			}
+			else
+				std::cerr << "error adding topologychange :" << meshIt.currentItem().apiTypeStr() << std::endl;
 		}
 		
 
@@ -97,8 +118,8 @@ EXPORT MStatus uninitializePlugin(MObject obj)
 	MTimerMessage::removeCallback(_TimeCallbackID);
 	MDGMessage	 ::removeCallback(_NodeCreatedID);
 	MNodeMessage ::removeCallback(_NodeNameChangedID);
-	MPolyMessage ::removeCallback(_VertChangedID);
-
+	
+	MMessage::removeCallbacks(polyCallbackIds);
 	MMessage::removeCallbacks(transformCallbackIds);
 
 	return MS::kSuccess;

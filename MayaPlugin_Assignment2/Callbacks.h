@@ -26,23 +26,29 @@ void NodeCreated(MObject &node, void *clientData)
 
 void NodeNameChanged(MObject &node, const MString & str,void *clientData)
 {
-	if (node.hasFn(MFn::kDagNode))
+	if (node.hasFn(MFn::kMesh)) //MFn::kDagNode  is default
 	{
 		MFnDagNode nodeHandle(node);
 		
-		
-
 			std::cerr << "A node has changed name \n"
 			<< "Node: " << str << "\n"
 			<< "New name: " << nodeHandle.name() << "\n"
-			<< "Node Path : " << nodeHandle.dagPath().fullPathName() << "\n" << std::endl;
-		
+			<< "Node Path : " << nodeHandle.fullPathName() << "\n" << std::endl;
 		
 	}
 
 
 		
 
+}
+
+
+
+
+void nodeIsDirty(MObject &node, void *clientData)
+{
+	MFnMesh obj(node);
+	std::cerr << "A Mesh has changed has changed!! |" << obj.name() << std::endl;
 }
 
 
@@ -53,18 +59,15 @@ void transformNodeChanged(MObject &transformNode, MDagMessage::MatrixModifiedFla
 
  }
 
-void VertChanged(MUintArray componentIds[], unsigned int count, void *clientData)
+
+void userCB(MNodeMessage::AttributeMessage msg, MPlug & plug,
+	MPlug & otherPlug, void*)
 {
-	std::cerr << "A VERT IS CHANGED" << std::endl;
+	
+	
+	std::cerr << "A Mesh has changed!! |" << plug.info() << std::endl;
+	std::cerr << "Attribute : " << plug.className() << std::endl;
 
-}
 
-void FaceChanged(MUintArray componentIds[], unsigned int count, void *clientData)
-{
-
-}
-
-void EdgeChanged(MUintArray componentIds[], unsigned int count, void *clientData)
-{
-
+	//plug.attribute().apiTypeStr()
 }
