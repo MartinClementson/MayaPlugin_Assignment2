@@ -45,6 +45,14 @@ void NodeNameChanged(MObject &node, const MString & str,void *clientData)
 
 }
 
+
+void transformNodeChanged(MObject &transformNode, MDagMessage::MatrixModifiedFlags &modified, void *clientData)
+{
+	MFnTransform obj(transformNode);
+	std::cerr << "A TransformNode has changed!! |" << obj.name() << std::endl;
+
+ }
+
 void VertChanged(MUintArray componentIds[], unsigned int count, void *clientData)
 {
 	std::cerr << "A VERT IS CHANGED" << std::endl;

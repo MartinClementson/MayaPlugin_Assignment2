@@ -10,13 +10,14 @@ static MCallbackId _TransformChangedID;
 
 static MCallbackIdArray polyCallbackIds;
 
+static MCallbackIdArray transformCallbackIds;
 static MCallbackId _VertChangedID;
 static MCallbackId _EdgeChangedID;
 static MCallbackId _FaceChangedID;
 EXPORT MStatus initializePlugin(MObject obj) {
 	std::cout.rdbuf(std::cerr.rdbuf());
 
-
+	
 	MStatus result = MS::kSuccess;
 
 	// Set plugin registration info: Author, plugin-version and Maya version needed.
@@ -30,7 +31,6 @@ EXPORT MStatus initializePlugin(MObject obj) {
 	
 	
 
-	//plugin.registerCommand("HelloWorld", HelloWorld::creator);
 	_TimeCallbackID     = MTimerMessage::addTimerCallback(5.0f, TimeCallback, NULL, &result);
 	_NodeCreatedID		= MDGMessage::addNodeAddedCallback(NodeCreated,"dependNode",NULL,&result);
 	//_TransformChangedID = MDagMessage::addWorldMatrixModifiedCallback()
@@ -46,10 +46,36 @@ EXPORT MStatus initializePlugin(MObject obj) {
 	wantIdChanges[MPolyMessage::kVertexIndex] = true;
 	wantIdChanges[MPolyMessage::kEdgeIndex] = false;
 	wantIdChanges[MPolyMessage::kFaceIndex] = false;
-		_VertChangedID = MPolyMessage::addPolyComponentIdChangedCallback(Nullobject, wantIdChanges, 3, VertChanged, NULL, &result);
+		//_VertChangedID = MPolyMessage::addPolyComponentIdChangedCallback(Nullobject, wantIdChanges, 3, VertChanged, NULL, &result);
 		//_EdgeChangedID = MPolyMessage::addPolyComponentIdChangedCallback(Nullobject,)
 		//_FaceChangedID = MPolyMessage::addPolyComponentIdChangedCallback(Nullobject,)
 		//MEventMessage::addEventCallback("testFunction",testFunction,)
+
+
+			//std::cerr << thisTransform.fullPathName() << std::endl;
+
+		MItDag transformIt(MItDag::kBreadthFirst, MFn::kTransform, &result);
+		for (; !transformIt.isDone(); transformIt.next())
+		{
+		
+			MFnTransform thisTransform(transformIt.currentItem());
+			
+			
+			MDagPath path = MDagPath::getAPathTo(thisTransform.child(0));
+					
+			MCallbackId newId = MDagMessage::addWorldMatrixModifiedCallback(path, transformNodeChanged, NULL, &result);
+			if (result == MS::kSuccess)
+			{
+				if(transformCallbackIds.append(newId)== MS::kSuccess)
+					std::cerr << "Transform callback added!  " << path.fullPathName() << std::endl;
+				else
+					std::cerr << "Could not add worldMatrix callback" << std::endl;
+				
+			}
+			else
+				std::cerr << "Could not add worldMatrix callback" << std::endl;
+		}
+		
 
 	// Print to show plugin command was registered.
 	MGlobal::displayInfo("Plugin is loaded");
@@ -72,6 +98,8 @@ EXPORT MStatus uninitializePlugin(MObject obj)
 	MDGMessage	 ::removeCallback(_NodeCreatedID);
 	MNodeMessage ::removeCallback(_NodeNameChangedID);
 	MPolyMessage ::removeCallback(_VertChangedID);
+
+	MMessage::removeCallbacks(transformCallbackIds);
 
 	return MS::kSuccess;
 }

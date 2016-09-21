@@ -20,3 +20,12 @@ if node.hasFn(MFn::kTransform)
 
 
 http://help.autodesk.com/view/MAYAUL/2016/ENU/?guid=__cpp_ref_poly_message_cmd_2poly_message_cmd_8cpp_example_html
+
+
+//Link to APi reference
+http://help.autodesk.com/view/MAYAUL/2016/ENU/?guid=__cpp_ref_annotated_html
+
+
+MDagPath path;
+
+ path.transform(&status);
