@@ -1,16 +1,8 @@
 #include "includes.h"
 #include "Callbacks.h"
+#include "CallbackIds.h"
 
 
-
-static MCallbackId _TimeCallbackID;
-static MCallbackId _NodeCreatedID;
-static MCallbackId _NodeNameChangedID;
-static MCallbackId _TransformChangedID;
-
-static MCallbackIdArray polyCallbackIds;
-
-static MCallbackIdArray transformCallbackIds;
 
 EXPORT MStatus initializePlugin(MObject obj) {
 	std::cout.rdbuf(std::cerr.rdbuf());
@@ -81,20 +73,27 @@ EXPORT MStatus initializePlugin(MObject obj) {
 		{
 					
 			MFnMesh thisMesh(meshIt.currentItem());
-			
 			//MCallbackId polyId = MNodeMessage::addNodeDirtyCallback(meshIt.currentItem(), nodeIsDirty, NULL, &result);
 
-			MCallbackId polyId =	MNodeMessage::addAttributeChangedCallback(meshIt.currentItem(),userCB,NULL,&result);
-
-			//MCallbackId polyId = MPolyMessage::addPolyTopologyChangedCallback(meshIt.currentItem() ,topologyChanged, NULL, &result);
+			MCallbackId polyId =	MNodeMessage::addAttributeChangedCallback(meshIt.currentItem(), attrChangedCB,NULL,&result);
+			
+			//thisMesh.attribute("quadSplit",)
+			
 			if (result == MS::kSuccess)
-
 			{
 				polyCallbackIds.append(polyId);
 				std::cerr << "Polychange callback added!  " << meshIt.currentItem().apiTypeStr() << std::endl;
 			}
 			else
 				std::cerr << "error adding topologychange :" << meshIt.currentItem().apiTypeStr() << std::endl;
+
+
+			 polyId = MPolyMessage::addPolyTopologyChangedCallback(meshIt.currentItem(), topologyChanged, NULL, &result);
+			if (result == MS::kSuccess)
+			{
+				polyCallbackIds.append(polyId);
+				std::cerr << "Polychange callback added!  " << meshIt.currentItem().apiTypeStr() << std::endl;
+			}
 		}
 		
 
@@ -108,7 +107,7 @@ EXPORT MStatus initializePlugin(MObject obj) {
 EXPORT MStatus uninitializePlugin(MObject obj)
 {
 	MFnPlugin plugin(obj);
-	//plugin.deregisterCommand("HelloWorld");
+	
 
 	// Print to show the plugin was unloaded.
 	std::cout << "In uninitializePlugin()\n" << std::endl;

@@ -51,3 +51,14 @@ MFnMesh class (hanterar kMesh)
 // innehåller view,  atris och sånt
 MRenderData
 
+
+
+
+kAttribute3Float|  
+
+
+
+Get raw triangles
+channelbox -> mesh controls
+
+quad split ÄR JÄTTE VIKTIGT!

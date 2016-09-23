@@ -124,6 +124,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CallbackIds.h" />
     <ClInclude Include="Callbacks.h" />
     <ClInclude Include="includes.h" />
   </ItemGroup>
